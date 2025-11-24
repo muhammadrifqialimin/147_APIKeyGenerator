@@ -1,0 +1,23 @@
+{
+  "name": "apikeyc",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "body-parser": "^2.2.0",
+    "cors": "^2.8.5",
+    "crypto": "^1.0.1",
+    "express": "^5.1.0",
+    "mysql2": "^3.15.3",
+    "node-cron": "^4.2.1",
+    "path": "^0.12.7",
+    "url": "^0.11.4"
+  }
+}

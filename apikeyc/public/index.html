@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Login</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <style>
+      :root {
+        --primary: #4361ee;
+        --secondary: #3a0ca3;
+        --success: #4cc9f0;
+        --danger: #f72585;
+        --warning: #f8961e;
+        --light: #f8f9fa;
+        --dark: #212529;
+        --gray: #6c757d;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      body {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+      }
+
+      .container {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        padding: 40px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        max-width: 450px;
+        animation: fadeIn 0.6s ease;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .header {
+        text-align: center;
+        margin-bottom: 30px;
+      }
+
+      .header i {
+        font-size: 48px;
+        color: var(--primary);
+        margin-bottom: 15px;
+      }
+
+      .header h1 {
+        color: var(--dark);
+        font-size: 28px;
+        font-weight: 700;
+        margin-bottom: 8px;
+      }
+
+      .header p {
+        color: var(--gray);
+        font-size: 16px;
+      }
+
+      .form-group {
+        margin-bottom: 20px;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: var(--dark);
+        font-size: 14px;
+      }
+
+      .input-group {
+        position: relative;
+      }
+
+      input {
+        width: 100%;
+        padding: 14px 16px;
+        border: 2px solid #e1e5e9;
+        border-radius: 10px;
+        font-size: 15px;
+        transition: all 0.3s ease;
+        background: white;
+      }
+
+      input:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+      }
+
+      .input-icon {
+        position: absolute;
+        right: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--gray);
+      }
+
+      .btn {
+        width: 100%;
+        padding: 15px 20px;
+        border: none;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 15px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        margin-top: 10px;
+      }
+
+      .btn-primary {
+        background: var(--primary);
+        color: white;
+      }
+
+      .btn-primary:hover {
+        background: var(--secondary);
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(67, 97, 238, 0.4);
+      }
+
+      .btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none !important;
+        box-shadow: none !important;
+      }
+
+      .message {
+        margin-top: 20px;
+        padding: 15px;
+        border-radius: 10px;
+        text-align: center;
+        font-weight: 600;
+        animation: slideIn 0.3s ease;
+      }
+
+      @keyframes slideIn {
+        from {
+          opacity: 0;
+          transform: translateY(-10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .message.success {
+        background: rgba(76, 201, 240, 0.1);
+        color: var(--success);
+        border: 1px solid rgba(76, 201, 240, 0.3);
+      }
+
+      .message.error {
+        background: rgba(247, 37, 133, 0.1);
+        color: var(--danger);
+        border: 1px solid rgba(247, 37, 133, 0.3);
+      }
+
+      .additional-links {
+        text-align: center;
+        margin-top: 25px;
+        padding-top: 20px;
+        border-top: 1px solid #e1e5e9;
+      }
+
+      .additional-links a {
+        color: var(--gray);
+        text-decoration: none;
+        font-size: 14px;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: color 0.3s ease;
+        padding: 10px 20px;
+        border-radius: 8px;
+        background: rgba(67, 97, 238, 0.05);
+        margin: 5px;
+      }
+
+      .additional-links a:hover {
+        color: var(--primary);
+        background: rgba(67, 97, 238, 0.1);
+      }
+
+      .password-toggle {
+        position: absolute;
+        right: 40px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--gray);
+        cursor: pointer;
+        transition: color 0.3s ease;
+      }
+
+      .password-toggle:hover {
+        color: var(--primary);
+      }
+
+      .remember-forgot {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 10px;
+        font-size: 14px;
+      }
+
+      .remember-me {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        color: var(--gray);
+      }
+
+      .remember-me input {
+        width: auto;
+        margin: 0;
+      }
+
+      .forgot-password {
+        color: var(--primary);
+        text-decoration: none;
+        transition: color 0.3s ease;
+      }
+
+      .forgot-password:hover {
+        color: var(--secondary);
+      }
+
+      @media (max-width: 480px) {
+        .container {
+          padding: 25px;
+        }
+
+        .header h1 {
+          font-size: 24px;
+        }
+
+        .header p {
+          font-size: 14px;
+        }
+
+        .remember-forgot {
+          flex-direction: column;
+          gap: 10px;
+          align-items: flex-start;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <i class="fas fa-user-shield"></i>
+        <h1>Admin Login</h1>
+        <p>Welcome back! Please sign in to your account</p>
+      </div>
+
+      <div class="form-group">
+        <label for="email"><i class="fas fa-envelope"></i> Email Address</label>
+        <div class="input-group">
+          <input
+            type="email"
+            id="email"
+            placeholder="Enter your email address"
+          />
+          <i class="fas fa-envelope input-icon"></i>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="password"><i class="fas fa-lock"></i> Password</label>
+        <div class="input-group">
+          <input
+            type="password"
+            id="password"
+            placeholder="Enter your password"
+          />
+          <i class="fas fa-lock input-icon"></i>
+          <span class="password-toggle" id="passwordToggle">
+            <i class="fas fa-eye"></i>
+          </span>
+        </div>
+        <div class="remember-forgot">
+          <label class="remember-me">
+            <input type="checkbox" id="rememberMe" />
+            Remember me
+          </label>
+          <a href="#" class="forgot-password">Forgot password?</a>
+        </div>
+      </div>
+
+      <button class="btn btn-primary" onclick="loginAdmin()" id="loginBtn">
+        <i class="fas fa-sign-in-alt"></i> Sign In
+      </button>
+
+      <div id="msg"></div>
+
+      <div class="additional-links">
+        <a href="admin-register.html">
+          <i class="fas fa-user-plus"></i> Don't have an account? Register here
+        </a>
+      </div>
+    </div>
+
+    <!-- Load auth system -->
+    <script src="auth.js"></script>
+    <script>
+      // Password toggle functionality
+      const passwordToggle = document.getElementById("passwordToggle");
+      const passwordInput = document.getElementById("password");
+
+      passwordToggle.addEventListener("click", function () {
+        const type =
+          passwordInput.getAttribute("type") === "password"
+            ? "text"
+            : "password";
+        passwordInput.setAttribute("type", type);
+
+        // Toggle eye icon
+        const icon = this.querySelector("i");
+        if (type === "text") {
+          icon.className = "fas fa-eye-slash";
+        } else {
+          icon.className = "fas fa-eye";
+        }
+      });
+
+      // Show message function
+      function showMessage(message, type = "info") {
+        const msg = document.getElementById("msg");
+        msg.innerHTML = `<div class="message ${type}">${message}</div>`;
+
+        // Auto hide success messages after redirect
+        if (type === "success") {
+          setTimeout(() => {
+            msg.innerHTML = "";
+          }, 3000);
+        }
+      }
+
+      // Form validation
+      function validateForm() {
+        const email = document.getElementById("email").value.trim();
+        const password = document.getElementById("password").value.trim();
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        if (!email || !password) {
+          showMessage("Please fill in all fields", "error");
+          return false;
+        }
+
+        if (!emailRegex.test(email)) {
+          showMessage("Please enter a valid email address", "error");
+          return false;
+        }
+
+        return true;
+      }
+
+      // Login admin function
+      async function loginAdmin() {
+        if (!validateForm()) {
+          return;
+        }
+
+        const email = document.getElementById("email").value.trim();
+        const password = document.getElementById("password").value.trim();
+        const loginBtn = document.getElementById("loginBtn");
+
+        // Show loading state
+        loginBtn.innerHTML =
+          '<i class="fas fa-spinner fa-spin"></i> Signing In...';
+        loginBtn.disabled = true;
+
+        try {
+          const result = await auth.login(email, password);
+
+          if (result.success) {
+            showMessage("Login successful! Redirecting...", "success");
+
+            // Store login state in localStorage if remember me is checked
+            const rememberMe = document.getElementById("rememberMe").checked;
+            if (rememberMe) {
+              localStorage.setItem("adminEmail", email);
+            }
+
+            // Redirect to dashboard after short delay
+            setTimeout(() => {
+              window.location.href = "dashboard.html";
+            }, 1500);
+          } else {
+            showMessage(result.message, "error");
+          }
+        } catch (error) {
+          console.error(error);
+          showMessage("Network error! Please check your connection.", "error");
+        } finally {
+          // Reset button state
+          loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Sign In';
+          loginBtn.disabled = false;
+        }
+      }
+
+      // Check for saved email
+      window.addEventListener("DOMContentLoaded", function () {
+        const savedEmail = localStorage.getItem("adminEmail");
+        if (savedEmail) {
+          document.getElementById("email").value = savedEmail;
+          document.getElementById("rememberMe").checked = true;
+        }
+      });
+
+      // Allow form submission with Enter key
+      document.addEventListener("keypress", function (event) {
+        if (event.key === "Enter") {
+          loginAdmin();
+        }
+      });
+
+      // Add input validation on focus out
+      document.getElementById("email").addEventListener("blur", function () {
+        const email = this.value.trim();
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        if (email && !emailRegex.test(email)) {
+          this.style.borderColor = "var(--danger)";
+        } else {
+          this.style.borderColor = "#e1e5e9";
+        }
+      });
+    </script>
+  </body>
+</html>
