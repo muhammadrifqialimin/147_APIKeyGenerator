@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>User Registration - API Key Generator</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <style>
+      :root {
+        --primary: #4361ee;
+        --secondary: #3a0ca3;
+        --success: #4cc9f0;
+        --danger: #f72585;
+        --warning: #f8961e;
+        --light: #f8f9fa;
+        --dark: #212529;
+        --gray: #6c757d;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      body {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+      }
+
+      .container {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        padding: 40px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        max-width: 500px;
+        animation: fadeIn 0.6s ease;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .header {
+        text-align: center;
+        margin-bottom: 30px;
+      }
+
+      .header i {
+        font-size: 48px;
+        color: var(--primary);
+        margin-bottom: 15px;
+      }
+
+      .header h1 {
+        color: var(--dark);
+        font-size: 28px;
+        font-weight: 700;
+        margin-bottom: 8px;
+      }
+
+      .header p {
+        color: var(--gray);
+        font-size: 16px;
+      }
+
+      .form-group {
+        margin-bottom: 20px;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: var(--dark);
+        font-size: 14px;
+      }
+
+      .input-group {
+        position: relative;
+      }
+
+      input {
+        width: 100%;
+        padding: 14px 16px;
+        border: 2px solid #e1e5e9;
+        border-radius: 10px;
+        font-size: 15px;
+        transition: all 0.3s ease;
+        background: white;
+      }
+
+      input:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+      }
+
+      input[readonly] {
+        background-color: #f8f9fa;
+        color: var(--gray);
+        cursor: not-allowed;
+      }
+
+      .input-icon {
+        position: absolute;
+        right: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--gray);
+      }
+
+      .api-key-display {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 15px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .api-key-display::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, #4cc9f0, #f72585, #f8961e);
+      }
+
+      .api-key-label {
+        font-size: 12px;
+        opacity: 0.9;
+        margin-bottom: 5px;
+      }
+
+      .api-key-value {
+        font-family: "Courier New", monospace;
+        font-size: 14px;
+        font-weight: 600;
+        word-break: break-all;
+      }
+
+      .copy-btn {
+        position: absolute;
+        right: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: rgba(255, 255, 255, 0.2);
+        border: none;
+        color: white;
+        padding: 6px 12px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 12px;
+        transition: background 0.3s ease;
+      }
+
+      .copy-btn:hover {
+        background: rgba(255, 255, 255, 0.3);
+      }
+
+      .button-group {
+        display: flex;
+        gap: 15px;
+        margin-top: 30px;
+      }
+
+      .btn {
+        flex: 1;
+        padding: 15px 20px;
+        border: none;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 15px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+      }
+
+      .btn-primary {
+        background: var(--primary);
+        color: white;
+      }
+
+      .btn-primary:hover {
+        background: var(--secondary);
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(67, 97, 238, 0.4);
+      }
+
+      .btn-success {
+        background: var(--success);
+        color: white;
+      }
+
+      .btn-success:hover {
+        background: #3aa8d0;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(76, 201, 240, 0.4);
+      }
+
+      .btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none !important;
+        box-shadow: none !important;
+      }
+
+      .message {
+        margin-top: 20px;
+        padding: 15px;
+        border-radius: 10px;
+        text-align: center;
+        font-weight: 600;
+        animation: slideIn 0.3s ease;
+      }
+
+      @keyframes slideIn {
+        from {
+          opacity: 0;
+          transform: translateY(-10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .message.success {
+        background: rgba(76, 201, 240, 0.1);
+        color: var(--success);
+        border: 1px solid rgba(76, 201, 240, 0.3);
+      }
+
+      .message.error {
+        background: rgba(247, 37, 133, 0.1);
+        color: var(--danger);
+        border: 1px solid rgba(247, 37, 133, 0.3);
+      }
+
+      .message.info {
+        background: rgba(67, 97, 238, 0.1);
+        color: var(--primary);
+        border: 1px solid rgba(67, 97, 238, 0.3);
+      }
+
+      .steps {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 30px;
+        position: relative;
+      }
+
+      .steps::before {
+        content: "";
+        position: absolute;
+        top: 15px;
+        left: 25px;
+        right: 25px;
+        height: 2px;
+        background: #e1e5e9;
+        z-index: 1;
+      }
+
+      .step {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        position: relative;
+        z-index: 2;
+      }
+
+      .step-number {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        background: #e1e5e9;
+        color: var(--gray);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        margin-bottom: 8px;
+        transition: all 0.3s ease;
+      }
+
+      .step.active .step-number {
+        background: var(--primary);
+        color: white;
+      }
+
+      .step.completed .step-number {
+        background: var(--success);
+        color: white;
+      }
+
+      .step-text {
+        font-size: 12px;
+        color: var(--gray);
+        text-align: center;
+      }
+
+      .step.active .step-text {
+        color: var(--primary);
+        font-weight: 600;
+      }
+
+      .back-link {
+        text-align: center;
+        margin-top: 25px;
+      }
+
+      .back-link a {
+        color: var(--gray);
+        text-decoration: none;
+        font-size: 14px;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        transition: color 0.3s ease;
+      }
+
+      .back-link a:hover {
+        color: var(--primary);
+      }
+
+      @media (max-width: 480px) {
+        .container {
+          padding: 25px;
+        }
+
+        .button-group {
+          flex-direction: column;
+        }
+
+        .steps {
+          flex-direction: column;
+          gap: 20px;
+          align-items: flex-start;
+        }
+
+        .steps::before {
+          display: none;
+        }
+
+        .step {
+          flex-direction: row;
+          gap: 15px;
+        }
+
+        .step-text {
+          text-align: left;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <i class="fas fa-user-plus"></i>
+        <h1>User Registration</h1>
+        <p>Register new user and generate API Key</p>
+      </div>
+
+      <div class="steps">
+        <div class="step active" id="step1">
+          <div class="step-number">1</div>
+          <div class="step-text">Fill User Data</div>
+        </div>
+        <div class="step" id="step2">
+          <div class="step-number">2</div>
+          <div class="step-text">Generate API Key</div>
+        </div>
+        <div class="step" id="step3">
+          <div class="step-number">3</div>
+          <div class="step-text">Complete Registration</div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="first_name"><i class="fas fa-user"></i> First Name</label>
+        <div class="input-group">
+          <input type="text" id="first_name" placeholder="Enter first name" />
+          <i class="fas fa-user input-icon"></i>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="last_name"><i class="fas fa-user"></i> Last Name</label>
+        <div class="input-group">
+          <input type="text" id="last_name" placeholder="Enter last name" />
+          <i class="fas fa-user input-icon"></i>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="email"><i class="fas fa-envelope"></i> Email Address</label>
+        <div class="input-group">
+          <input type="email" id="email" placeholder="Enter email address" />
+          <i class="fas fa-envelope input-icon"></i>
+        </div>
+      </div>
+
+      <div class="api-key-display" id="apiKeyDisplay" style="display: none">
+        <div class="api-key-label">Your API Key</div>
+        <div class="api-key-value" id="apiKeyValue"></div>
+        <button class="copy-btn" id="copyBtn">
+          <i class="fas fa-copy"></i> Copy
+        </button>
+      </div>
+
+      <div class="button-group">
+        <button class="btn btn-primary" id="generateKeyBtn">
+          <i class="fas fa-key"></i> Generate API Key
+        </button>
+        <button class="btn btn-success" id="saveUserBtn" disabled>
+          <i class="fas fa-save"></i> Register User
+        </button>
+      </div>
+
+      <div id="msg"></div>
+
+      <div class="back-link">
+        <a href="dashboard.html">
+          <i class="fas fa-arrow-left"></i> Back to Dashboard
+        </a>
+      </div>
+    </div>
+
+    <script>
+      // Menyimpan apikey_id dari server
+      let apikey_id = null;
+
+      // Element references
+      const generateKeyBtn = document.getElementById("generateKeyBtn");
+      const saveUserBtn = document.getElementById("saveUserBtn");
+      const apiKeyDisplay = document.getElementById("apiKeyDisplay");
+      const apiKeyValue = document.getElementById("apiKeyValue");
+      const copyBtn = document.getElementById("copyBtn");
+      const msg = document.getElementById("msg");
+      const steps = {
+        step1: document.getElementById("step1"),
+        step2: document.getElementById("step2"),
+        step3: document.getElementById("step3"),
+      };
+
+      // Update step progress
+      function updateSteps(currentStep) {
+        // Reset all steps
+        Object.values(steps).forEach((step) => {
+          step.classList.remove("active", "completed");
+        });
+
+        // Set completed and active steps
+        if (currentStep >= 1) steps.step1.classList.add("completed");
+        if (currentStep >= 2) steps.step2.classList.add("completed");
+        if (currentStep >= 3) steps.step3.classList.add("completed");
+
+        if (currentStep === 1) steps.step1.classList.add("active");
+        if (currentStep === 2) steps.step2.classList.add("active");
+        if (currentStep === 3) steps.step3.classList.add("active");
+      }
+
+      // Initialize steps
+      updateSteps(1);
+
+      // Show message function
+      function showMessage(message, type = "info") {
+        msg.innerHTML = `<div class="message ${type}">${message}</div>`;
+
+        // Auto hide success messages after 5 seconds
+        if (type === "success") {
+          setTimeout(() => {
+            msg.innerHTML = "";
+          }, 5000);
+        }
+      }
+
+      // Copy API Key to clipboard
+      copyBtn.addEventListener("click", async () => {
+        const apiKey = apiKeyValue.textContent;
+        try {
+          await navigator.clipboard.writeText(apiKey);
+          showMessage("API Key copied to clipboard!", "success");
+
+          // Visual feedback
+          const originalText = copyBtn.innerHTML;
+          copyBtn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+          setTimeout(() => {
+            copyBtn.innerHTML = originalText;
+          }, 2000);
+        } catch (err) {
+          showMessage("Failed to copy API Key", "error");
+        }
+      });
+
+      // Validate form
+      function validateForm() {
+        const firstName = document.getElementById("first_name").value.trim();
+        const lastName = document.getElementById("last_name").value.trim();
+        const email = document.getElementById("email").value.trim();
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        if (!firstName || !lastName || !email) {
+          return "All fields are required";
+        }
+
+        if (!emailRegex.test(email)) {
+          return "Please enter a valid email address";
+        }
+
+        return null;
+      }
+
+      // ============================
+      //  GENERATE API KEY
+      // ============================
+      generateKeyBtn.addEventListener("click", async () => {
+        const validationError = validateForm();
+        if (validationError) {
+          showMessage(validationError, "error");
+          return;
+        }
+
+        // Show loading state
+        generateKeyBtn.innerHTML =
+          '<i class="fas fa-spinner fa-spin"></i> Generating...';
+        generateKeyBtn.disabled = true;
+
+        try {
+          const response = await fetch(
+            "http://localhost:3000/generate-api-key"
+          );
+          const data = await response.json();
+
+          if (data.success) {
+            apiKeyValue.textContent = data.api_key;
+            apikey_id = data.apikey_id;
+            apiKeyDisplay.style.display = "block";
+
+            // Enable save button
+            saveUserBtn.disabled = false;
+
+            // Update steps
+            updateSteps(2);
+
+            showMessage("API Key generated successfully!", "success");
+
+            // Scroll to API key display
+            apiKeyDisplay.scrollIntoView({
+              behavior: "smooth",
+              block: "center",
+            });
+          } else {
+            showMessage("Failed to generate API Key!", "error");
+          }
+        } catch (error) {
+          console.error(error);
+          showMessage("Network error! Please check your connection.", "error");
+        } finally {
+          // Reset button state
+          generateKeyBtn.innerHTML =
+            '<i class="fas fa-key"></i> Generate API Key';
+          generateKeyBtn.disabled = false;
+        }
+      });
+
+      // ============================
+      //  SIMPAN USER KE DATABASE
+      // ============================
+      saveUserBtn.addEventListener("click", async () => {
+        if (!apikey_id) {
+          showMessage("Please generate API key first!", "error");
+          return;
+        }
+
+        const validationError = validateForm();
+        if (validationError) {
+          showMessage(validationError, "error");
+          return;
+        }
+
+        // Show loading state
+        saveUserBtn.innerHTML =
+          '<i class="fas fa-spinner fa-spin"></i> Registering...';
+        saveUserBtn.disabled = true;
+        generateKeyBtn.disabled = true;
+
+        const payload = {
+          first_name: document.getElementById("first_name").value.trim(),
+          last_name: document.getElementById("last_name").value.trim(),
+          email: document.getElementById("email").value.trim(),
+          apikey_id: apikey_id,
+        };
+
+        try {
+          const response = await fetch("http://localhost:3000/user/register", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+          });
+
+          const data = await response.json();
+
+          if (data.success) {
+            showMessage("User registered successfully!", "success");
+
+            // Update steps
+            updateSteps(3);
+
+            // Reset form after successful registration
+            setTimeout(() => {
+              document.getElementById("first_name").value = "";
+              document.getElementById("last_name").value = "";
+              document.getElementById("email").value = "";
+              apiKeyDisplay.style.display = "none";
+              saveUserBtn.disabled = true;
+              updateSteps(1);
+            }, 2000);
+          } else {
+            showMessage(data.message || "Failed to register user!", "error");
+          }
+        } catch (error) {
+          console.error(error);
+          showMessage("Server error! Please try again.", "error");
+        } finally {
+          // Reset button state
+          saveUserBtn.innerHTML = '<i class="fas fa-save"></i> Register User';
+          saveUserBtn.disabled = false;
+          generateKeyBtn.disabled = false;
+        }
+      });
+
+      // Real-time form validation
+      const inputs = ["first_name", "last_name", "email"];
+      inputs.forEach((id) => {
+        document.getElementById(id).addEventListener("input", () => {
+          const error = validateForm();
+          if (error && !apiKeyDisplay.style.display) {
+            generateKeyBtn.disabled = true;
+          } else {
+            generateKeyBtn.disabled = false;
+          }
+        });
+      });
+    </script>
+  </body>
+</html>
