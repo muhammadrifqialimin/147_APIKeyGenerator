@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Dashboard - User Management</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <style>
+      :root {
+        --primary: #4361ee;
+        --secondary: #3a0ca3;
+        --success: #4cc9f0;
+        --danger: #f72585;
+        --warning: #f8961e;
+        --info: #4895ef;
+        --light: #f8f9fa;
+        --dark: #212529;
+        --gray: #6c757d;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      body {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding: 20px;
+      }
+
+      .container {
+        max-width: 1400px;
+        margin: 0 auto;
+      }
+
+      /* Unauthorized Access Styles */
+      .unauthorized-container {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 20px;
+        padding: 60px 40px;
+        text-align: center;
+        max-width: 500px;
+        margin: 100px auto;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        animation: fadeIn 0.6s ease;
+      }
+
+      .unauthorized-icon {
+        font-size: 80px;
+        color: var(--danger);
+        margin-bottom: 20px;
+      }
+
+      .unauthorized-message {
+        color: var(--dark);
+        margin-bottom: 30px;
+        font-size: 16px;
+        line-height: 1.6;
+      }
+
+      .hidden {
+        display: none;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* Dashboard Styles */
+      .dashboard-header {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 15px;
+        padding: 25px;
+        margin-bottom: 25px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 15px;
+      }
+
+      .header-left {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .dashboard-title {
+        color: var(--dark);
+        font-size: 28px;
+        font-weight: 700;
+      }
+
+      .dashboard-title i {
+        color: var(--primary);
+        margin-right: 10px;
+      }
+
+      .user-info {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        color: var(--gray);
+        font-size: 14px;
+      }
+
+      .user-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: var(--primary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: bold;
+      }
+
+      .action-buttons {
+        display: flex;
+        gap: 15px;
+        flex-wrap: wrap;
+      }
+
+      .btn {
+        padding: 12px 24px;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        text-decoration: none;
+        font-size: 14px;
+      }
+
+      .btn-primary {
+        background: var(--primary);
+        color: white;
+      }
+
+      .btn-primary:hover {
+        background: var(--secondary);
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(67, 97, 238, 0.4);
+      }
+
+      .btn-danger {
+        background: var(--danger);
+        color: white;
+      }
+
+      .btn-danger:hover {
+        background: #d1144a;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(247, 37, 133, 0.4);
+      }
+
+      .btn-success {
+        background: var(--success);
+        color: white;
+      }
+
+      .btn-success:hover {
+        background: #3aa8d0;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(76, 201, 240, 0.4);
+      }
+
+      .btn-warning {
+        background: var(--warning);
+        color: white;
+      }
+
+      .btn-warning:hover {
+        background: #e07c0c;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(248, 150, 30, 0.4);
+      }
+
+      .btn-sm {
+        padding: 8px 16px;
+        font-size: 13px;
+      }
+
+      .stats-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        margin-bottom: 25px;
+      }
+
+      .stat-card {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 12px;
+        padding: 20px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        transition: transform 0.3s ease;
+      }
+
+      .stat-card:hover {
+        transform: translateY(-5px);
+      }
+
+      .stat-title {
+        font-size: 14px;
+        color: var(--gray);
+        margin-bottom: 8px;
+      }
+
+      .stat-value {
+        font-size: 28px;
+        font-weight: 700;
+        color: var(--dark);
+      }
+
+      .stat-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 15px;
+        font-size: 20px;
+      }
+
+      .icon-users {
+        background: rgba(67, 97, 238, 0.1);
+        color: var(--primary);
+      }
+      .icon-active {
+        background: rgba(76, 201, 240, 0.1);
+        color: var(--success);
+      }
+      .icon-inactive {
+        background: rgba(248, 150, 30, 0.1);
+        color: var(--warning);
+      }
+      .icon-expired {
+        background: rgba(247, 37, 133, 0.1);
+        color: var(--danger);
+      }
+
+      .table-container {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        margin-bottom: 25px;
+        overflow-x: auto;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 1000px;
+      }
+
+      thead {
+        background: var(--primary);
+      }
+
+      th {
+        padding: 18px 15px;
+        text-align: left;
+        color: white;
+        font-weight: 600;
+        font-size: 14px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      tbody tr {
+        border-bottom: 1px solid #e0e0e0;
+        transition: background 0.3s ease;
+      }
+
+      tbody tr:hover {
+        background: rgba(67, 97, 238, 0.05);
+      }
+
+      tbody tr:last-child {
+        border-bottom: none;
+      }
+
+      td {
+        padding: 15px;
+        color: var(--dark);
+        font-size: 14px;
+      }
+
+      .status-badge {
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+        display: inline-block;
+      }
+
+      .status-active {
+        background: rgba(76, 201, 240, 0.15);
+        color: var(--success);
+      }
+      .status-inactive {
+        background: rgba(248, 150, 30, 0.15);
+        color: var(--warning);
+      }
+      .status-expired {
+        background: rgba(247, 37, 133, 0.15);
+        color: var(--danger);
+      }
+
+      .action-cell {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+
+      .api-key {
+        font-family: monospace;
+        background: #f5f5f5;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 12px;
+        max-width: 200px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .empty-state {
+        text-align: center;
+        padding: 50px 20px;
+        color: var(--gray);
+      }
+
+      .empty-state i {
+        font-size: 50px;
+        margin-bottom: 15px;
+        color: #ddd;
+      }
+
+      .loading {
+        text-align: center;
+        padding: 30px;
+        color: var(--gray);
+      }
+
+      .loading-spinner {
+        border: 4px solid #f3f3f3;
+        border-top: 4px solid var(--primary);
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        animation: spin 1s linear infinite;
+        margin: 0 auto 15px;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      .toast {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 15px 25px;
+        border-radius: 8px;
+        color: white;
+        font-weight: 600;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        z-index: 1000;
+        transform: translateX(150%);
+        transition: transform 0.3s ease;
+      }
+
+      .toast.show {
+        transform: translateX(0);
+      }
+
+      .toast-success {
+        background: var(--success);
+      }
+
+      .toast-error {
+        background: var(--danger);
+      }
+
+      .toast-warning {
+        background: var(--warning);
+      }
+
+      @media (max-width: 768px) {
+        .dashboard-header {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+
+        .action-buttons {
+          width: 100%;
+        }
+
+        .btn {
+          flex: 1;
+          justify-content: center;
+        }
+
+        .user-info {
+          margin-top: 15px;
+          width: 100%;
+          justify-content: center;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Unauthorized Access Message -->
+    <div id="unauthorizedAccess" class="unauthorized-container hidden">
+      <div class="unauthorized-icon">
+        <i class="fas fa-exclamation-triangle"></i>
+      </div>
+      <h2>Access Denied</h2>
+      <p class="unauthorized-message">
+        You need to login first to access the dashboard.
+      </p>
+      <button class="btn btn-primary" onclick="redirectToLogin()">
+        <i class="fas fa-sign-in-alt"></i> Go to Login
+      </button>
+    </div>
+
+    <!-- Dashboard Content (Protected) -->
+    <div id="dashboardContent" class="container hidden">
+      <div class="dashboard-header">
+        <div class="header-left">
+          <h1 class="dashboard-title">
+            <i class="fas fa-users-cog"></i>User Management Dashboard
+          </h1>
+          <div class="user-info">
+            <div class="user-avatar">
+              <i class="fas fa-user-shield"></i>
+            </div>
+            <span id="adminEmail">Administrator</span>
+          </div>
+        </div>
+        <div class="action-buttons">
+          <a href="user-register.html" class="btn btn-primary">
+            <i class="fas fa-user-plus"></i>Register User
+          </a>
+          <button class="btn btn-success" onclick="refreshData()">
+            <i class="fas fa-sync-alt"></i>Refresh Data
+          </button>
+          <button class="btn btn-danger" onclick="deactivateInactiveUsers()">
+            <i class="fas fa-user-slash"></i>Deactivate Inactive
+          </button>
+          <button class="btn btn-warning" onclick="logout()">
+            <i class="fas fa-sign-out-alt"></i>Log Out
+          </button>
+        </div>
+      </div>
+
+      <div class="stats-container" id="statsContainer">
+        <div class="stat-card">
+          <div class="stat-icon icon-users">
+            <i class="fas fa-users"></i>
+          </div>
+          <div class="stat-title">Total Users</div>
+          <div class="stat-value" id="totalUsers">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon icon-active">
+            <i class="fas fa-user-check"></i>
+          </div>
+          <div class="stat-title">Active Users</div>
+          <div class="stat-value" id="activeUsers">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon icon-inactive">
+            <i class="fas fa-user-clock"></i>
+          </div>
+          <div class="stat-title">Inactive Users</div>
+          <div class="stat-value" id="inactiveUsers">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon icon-expired">
+            <i class="fas fa-user-times"></i>
+          </div>
+          <div class="stat-title">Expired Keys</div>
+          <div class="stat-value" id="expiredUsers">0</div>
+        </div>
+      </div>
+
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Email</th>
+              <th>API Key</th>
+              <th>Last Login</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="dataUser">
+            <tr>
+              <td colspan="7" class="loading">
+                <div class="loading-spinner"></div>
+                Loading user data...
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+
+    <!-- Load auth system first -->
+    <script src="auth.js"></script>
+    <script>
+      // Toast notification function
+      function showToast(message, type = "success") {
+        const toast = document.getElementById("toast");
+        toast.textContent = message;
+        toast.className = `toast toast-${type} show`;
+
+        setTimeout(() => {
+          toast.classList.remove("show");
+        }, 3000);
+      }
+
+      // Redirect to login
+      function redirectToLogin() {
+        window.location.href = "index.html";
+      }
+
+      // Private Route implementation
+      async function checkAuthAndLoadDashboard() {
+        try {
+          const authStatus = await auth.checkAuthStatus();
+
+          if (authStatus.authenticated) {
+            // User is authenticated, show dashboard
+            document
+              .getElementById("dashboardContent")
+              .classList.remove("hidden");
+            document
+              .getElementById("unauthorizedAccess")
+              .classList.add("hidden");
+
+            // Display admin email
+            if (authStatus.admin && authStatus.admin.email) {
+              document.getElementById("adminEmail").textContent =
+                authStatus.admin.email;
+            }
+
+            // Load dashboard data
+            loadUsers();
+          } else {
+            // User not authenticated, show access denied
+            document.getElementById("dashboardContent").classList.add("hidden");
+            document
+              .getElementById("unauthorizedAccess")
+              .classList.remove("hidden");
+          }
+        } catch (error) {
+          console.error("Auth check error:", error);
+          document.getElementById("dashboardContent").classList.add("hidden");
+          document
+            .getElementById("unauthorizedAccess")
+            .classList.remove("hidden");
+        }
+      }
+
+      // Load user data with auth protection
+      async function loadUsers() {
+        try {
+          const res = await fetch("/user/list", {
+            headers: auth.getAuthHeaders(),
+          });
+
+          if (res.status === 401) {
+            // Unauthorized, redirect to login
+            await auth.logout();
+            redirectToLogin();
+            return;
+          }
+
+          if (!res.ok) throw new Error("Failed to fetch data");
+
+          const data = await res.json();
+          const tbody = document.getElementById("dataUser");
+
+          if (data.length === 0) {
+            tbody.innerHTML = `
+                        <tr>
+                            <td colspan="7" class="empty-state">
+                                <i class="fas fa-users-slash"></i>
+                                <h3>No Users Found</h3>
+                                <p>Register a new user to get started</p>
+                            </td>
+                        </tr>`;
+            return;
+          }
+
+          tbody.innerHTML = data
+            .map(
+              (u) => `
+                        <tr>
+                            <td>${u.id}</td>
+                            <td>
+                                <strong>${u.first_name} ${u.last_name}</strong>
+                            </td>
+                            <td>${u.email}</td>
+                            <td>
+                                <div class="api-key" title="${
+                                  u.api_key || "No API Key"
+                                }">
+                                    ${u.api_key || "No API Key"}
+                                </div>
+                            </td>
+                            <td>
+                                ${
+                                  u.last_login
+                                    ? `${new Date(
+                                        u.last_login
+                                      ).toLocaleDateString()} ${new Date(
+                                        u.last_login
+                                      ).toLocaleTimeString()}`
+                                    : "Never"
+                                }
+                                ${
+                                  u.days_since_login &&
+                                  u.days_since_login !== "Belum login"
+                                    ? `<br><small>(${u.days_since_login} days ago)</small>`
+                                    : ""
+                                }
+                            </td>
+                            <td>
+                                <span class="status-badge status-${u.status.toLowerCase()}">
+                                    ${u.status}
+                                </span>
+                            </td>
+                            <td class="action-cell">
+                                <button class="btn btn-primary btn-sm" onclick="viewUser(${
+                                  u.id
+                                })">
+                                    <i class="fas fa-eye"></i> View
+                                </button>
+                                <button class="btn btn-danger btn-sm" onclick="deleteUser(${
+                                  u.id
+                                }, '${u.first_name} ${u.last_name}')">
+                                    <i class="fas fa-trash"></i> Delete
+                                </button>
+                                <button class="btn btn-success btn-sm" onclick="updateLastLogin(${
+                                  u.id
+                                })">
+                                    <i class="fas fa-sign-in-alt"></i> Login
+                                </button>
+                            </td>
+                        </tr>
+                    `
+            )
+            .join("");
+
+          updateStats(data);
+        } catch (error) {
+          console.error("Error loading users:", error);
+          if (error.message.includes("Unauthorized")) {
+            redirectToLogin();
+            return;
+          }
+          document.getElementById("dataUser").innerHTML = `
+                    <tr>
+                        <td colspan="7" class="empty-state">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <h3>Error Loading Data</h3>
+                            <p>${error.message}</p>
+                            <button class="btn btn-primary" onclick="loadUsers()">
+                                <i class="fas fa-redo"></i> Try Again
+                            </button>
+                        </td>
+                    </tr>`;
+        }
+      }
+
+      // Update statistics
+      function updateStats(users) {
+        const totalUsers = users.length;
+        const activeUsers = users.filter((u) => u.status === "Aktif").length;
+        const inactiveUsers = users.filter(
+          (u) => u.status === "Non-Aktif"
+        ).length;
+        const expiredUsers = users.filter((u) => u.status === "Expired").length;
+
+        document.getElementById("totalUsers").textContent = totalUsers;
+        document.getElementById("activeUsers").textContent = activeUsers;
+        document.getElementById("inactiveUsers").textContent = inactiveUsers;
+        document.getElementById("expiredUsers").textContent = expiredUsers;
+      }
+
+      // Delete user function
+      async function deleteUser(userId, userName) {
+        if (
+          !confirm(
+            `Are you sure you want to delete user "${userName}"? This action cannot be undone.`
+          )
+        ) {
+          return;
+        }
+
+        try {
+          const response = await fetch(`/user/${userId}`, {
+            method: "DELETE",
+            headers: auth.getAuthHeaders(),
+          });
+
+          const result = await response.json();
+
+          if (result.success) {
+            showToast(`User "${userName}" deleted successfully`, "success");
+            loadUsers(); // Refresh the list
+          } else {
+            showToast(`Failed to delete user: ${result.message}`, "error");
+          }
+        } catch (error) {
+          console.error("Error deleting user:", error);
+          showToast("Error deleting user. Please try again.", "error");
+        }
+      }
+
+      // Update last login (for testing)
+      async function updateLastLogin(userId) {
+        try {
+          const response = await fetch("/admin/update-last-login", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              ...auth.getAuthHeaders(),
+            },
+            body: JSON.stringify({ user_id: userId }),
+          });
+
+          const result = await response.json();
+
+          if (result.success) {
+            showToast("Last login updated successfully", "success");
+            loadUsers(); // Refresh the list
+          } else {
+            showToast(`Failed to update login: ${result.message}`, "error");
+          }
+        } catch (error) {
+          console.error("Error updating last login:", error);
+          showToast("Error updating last login", "error");
+        }
+      }
+
+      // View user details
+      function viewUser(userId) {
+        alert(
+          `Viewing details for user ID: ${userId}\n\nThis would typically open a detailed view or modal.`
+        );
+      }
+
+      // Refresh data
+      function refreshData() {
+        showToast("Refreshing data...", "success");
+        loadUsers();
+      }
+
+      // Deactivate inactive users
+      async function deactivateInactiveUsers() {
+        if (
+          !confirm(
+            "This will deactivate all users who have been inactive for more than 30 days. Continue?"
+          )
+        ) {
+          return;
+        }
+
+        try {
+          const response = await fetch("/admin/deactivate-inactive-users", {
+            method: "POST",
+            headers: auth.getAuthHeaders(),
+          });
+
+          const result = await response.json();
+
+          if (result.success) {
+            showToast(result.message, "success");
+            loadUsers(); // Refresh the list
+          } else {
+            showToast(`Failed to deactivate users: ${result.message}`, "error");
+          }
+        } catch (error) {
+          console.error("Error deactivating users:", error);
+          showToast("Error deactivating users", "error");
+        }
+      }
+
+      // Logout function
+      async function logout() {
+        if (confirm("Are you sure you want to log out?")) {
+          showToast("Logging out...", "warning");
+          await auth.logout();
+
+          setTimeout(() => {
+            redirectToLogin();
+          }, 1000);
+        }
+      }
+
+      // Add keyboard shortcut for logout (Ctrl + L)
+      document.addEventListener("keydown", function (event) {
+        if (event.ctrlKey && event.key === "l") {
+          event.preventDefault();
+          logout();
+        }
+      });
+
+      // Initialize dashboard with auth check
+      document.addEventListener("DOMContentLoaded", checkAuthAndLoadDashboard);
+    </script>
+  </body>
+</html>
